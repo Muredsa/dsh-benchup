@@ -22,10 +22,10 @@ export interface EpisodeState {
   process: 'fresh' | 'restart' | 'reuse'
 }
 
-export interface ExactEvaluatorSpec {
-  type: 'exact'
-  expected: string
-}
+/** Exact comparison against either an inaccessible literal or a fixture file. */
+export type ExactEvaluatorSpec =
+  | { type: 'exact', expected: string, expectedValue?: never }
+  | { type: 'exact', expectedValue: string, expected?: never }
 
 export interface CommandEvaluatorSpec {
   type: 'command'
@@ -54,6 +54,7 @@ export interface EvaluatorGroup {
 
 export interface EpisodeSpec {
   id: string
+  fixture?: string
   task: string
   state: EpisodeState
 }
@@ -166,7 +167,13 @@ function parseState(value: unknown, at: string): EpisodeState {
 function parseEvaluator(value: unknown, at: string): EvaluatorSpec {
   const raw = record(value, at)
   const type = stringValue(raw.type, `${at}.type`)
-  if (type === 'exact') return { type, expected: stringValue(raw.expected, `${at}.expected`) }
+  if (type === 'exact') {
+    const expected = raw.expected === undefined ? undefined : stringValue(raw.expected, `${at}.expected`)
+    const expectedValue = raw.expectedValue === undefined ? undefined : stringValue(raw.expectedValue, `${at}.expectedValue`)
+    if (expected === undefined && expectedValue === undefined) throw new ExperimentFormatError(`${at} needs expected or expectedValue`)
+    if (expected !== undefined && expectedValue !== undefined) throw new ExperimentFormatError(`${at} cannot specify both expected and expectedValue`)
+    return expected === undefined ? { type, expectedValue: expectedValue! } : { type, expected }
+  }
   if (type === 'command') return { type, command: stringArray(raw.command, `${at}.command`) ?? [], timeoutMs: raw.timeoutMs === undefined ? undefined : integer(raw.timeoutMs, `${at}.timeoutMs`) }
   if (type === 'json') return { type, path: stringValue(raw.path, `${at}.path`), schema: record(raw.schema, `${at}.schema`) }
   if (type === 'file') {
@@ -211,7 +218,12 @@ function parseScenarios(value: unknown): ScenarioSpec[] {
         const episodeId = episode.id === undefined ? String(episodeIndex + 1).padStart(2, '0') : stringValue(episode.id, `${episodeAt}.id`)
         if (episodeIds.has(episodeId)) throw new ExperimentFormatError(`${episodeAt}.id is duplicated`)
         episodeIds.add(episodeId)
-        return { id: episodeId, task: stringValue(episode.task, `${episodeAt}.task`), state: parseState(episode.state, `${episodeAt}.state`) }
+        return {
+          id: episodeId,
+          fixture: episode.fixture === undefined ? undefined : stringValue(episode.fixture, `${episodeAt}.fixture`),
+          task: stringValue(episode.task, `${episodeAt}.task`),
+          state: parseState(episode.state, `${episodeAt}.state`),
+        }
       })
     }
     return {

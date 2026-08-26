@@ -1,0 +1,330 @@
+version: 1
+runs: 3
+schedule: paired-shuffled
+
+models:
+  ox-alpha:
+    provider: openrouter
+    model: stealth/ox-alpha
+    temperature: 1
+    reasoningEffort: max
+
+variants:
+  baseline:
+    profile: headless
+  memcore:
+    profile: headless-memcore
+
+scenarios:
+  - id: fact/aurora-marker
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/fact-aurora/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/fact-aurora/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "AURORA-17-CRANE\n" }
+
+  - id: fact/cirrus-date
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/fact-cirrus/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/fact-cirrus/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "2031-06-17\n" }
+
+  - id: fact/maple-limit
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/fact-maple/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/fact-maple/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "4096\n" }
+
+  - id: fact/ember-path
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/fact-ember/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/fact-ember/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "services/ember-gateway/config.toml\n" }
+
+  - id: fact/harbor-owner
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/fact-harbor/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/fact-harbor/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "Mira\n" }
+
+  - id: update/violet-status
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/update-violet/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: update
+        fixture: memcore/fixtures/update-violet/update
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+      - id: recall
+        fixture: memcore/fixtures/update-violet/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "VD-NEW-82\n" }
+
+  - id: update/orbit-region
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/update-orbit/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: update
+        fixture: memcore/fixtures/update-orbit/update
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+      - id: recall
+        fixture: memcore/fixtures/update-orbit/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "eu-west-3\n" }
+
+  - id: update/pine-policy
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/update-pine/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: update
+        fixture: memcore/fixtures/update-pine/update
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+      - id: recall
+        fixture: memcore/fixtures/update-pine/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "strict\n" }
+
+  - id: update/cedar-version
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/update-cedar/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: update
+        fixture: memcore/fixtures/update-cedar/update
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+      - id: recall
+        fixture: memcore/fixtures/update-cedar/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "v3.8.1\n" }
+
+  - id: exact/atlas-token
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/exact-atlas/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/exact-atlas/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "QX7-aP9-31\n" }
+
+  - id: exact/ember-fingerprint
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/exact-ember/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/exact-ember/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "9f:2A:7c:00:B1\n" }
+
+  - id: exact/meridian-selector
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/exact-meridian/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/exact-meridian/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "edge[3]/blue?ttl=45\n" }
+
+  - id: exact/solstice-code
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/exact-solstice/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/exact-solstice/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "RAVEN_08-DELTA\n" }
+
+  - id: procedure/quartz-repair
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/procedure-quartz/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/procedure-quartz/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "pnpm run repair-index -- --safe\n" }
+
+  - id: procedure/larch-migration
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/procedure-larch/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/procedure-larch/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "pnpm db:migrate -- --dry-run\n" }
+
+  - id: procedure/river-rollback
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/procedure-river/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/procedure-river/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "git revert --no-edit HEAD\n" }
+
+  - id: multihop/obsidian-deployment
+    episodes:
+      - id: component
+        fixture: memcore/fixtures/multihop-obsidian/component
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: environment
+        fixture: memcore/fixtures/multihop-obsidian/environment
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+      - id: recall
+        fixture: memcore/fixtures/multihop-obsidian/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "relay-sigma@staging-orbit\n" }
+
+  - id: multihop/copper-owner
+    episodes:
+      - id: service
+        fixture: memcore/fixtures/multihop-copper/service
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: owner
+        fixture: memcore/fixtures/multihop-copper/owner
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+      - id: recall
+        fixture: memcore/fixtures/multihop-copper/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "argon-api@Nila\n" }
+
+  - id: multihop/fir-release
+    episodes:
+      - id: package
+        fixture: memcore/fixtures/multihop-fir/package
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: channel
+        fixture: memcore/fixtures/multihop-fir/channel
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+      - id: recall
+        fixture: memcore/fixtures/multihop-fir/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "fir-cli@canary-amber\n" }
+
+  - id: distractor/lantern-owner
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/distractor-lantern/seed
+        task: memcore/tasks/store-batch.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/distractor-lantern/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "Elian\n" }
+
+  - id: distractor/keystone-port
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/distractor-keystone/seed
+        task: memcore/tasks/store-batch.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/distractor-keystone/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "4817\n" }
+
+  - id: control/exact-following
+    task: memcore/tasks/control-exact.md
+    evaluators: { type: exact, expectedValue: "CONTROL-MAPLE-17\n" }
+
+  - id: control/json-file
+    task: memcore/tasks/control-json.md
+    evaluators:
+      mode: all
+      checks:
+        - type: file
+          path: result.json
+        - type: json
+          path: result.json
+          schema:
+            type: object
+            additionalProperties: false
+            required: [suite, mode, count]
+            properties:
+              suite: { const: memcore }
+              mode: { const: control }
+              count: { const: 24 }
+
+  - id: control/code-repair
+    fixture: ox-alpha/code-repair
+    task: ox-alpha/tasks/03-code-repair.md
+    evaluators:
+      mode: all
+      checks:
+        - type: command
+          command: [node, --test, checks/slug-check.mjs]
+        - type: file
+          path: src/slug.js

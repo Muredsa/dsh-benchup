@@ -66,7 +66,7 @@ export async function evaluate(group: EvaluatorGroup, context: EvaluationContext
 
 async function evaluateOne(spec: EvaluatorSpec, context: EvaluationContext): Promise<EvaluationResult> {
   if (spec.type === 'exact') {
-    const expected = readFileSync(resolveWithin(context.workspace, spec.expected), 'utf8')
+    const expected = 'expectedValue' in spec ? spec.expectedValue : readFileSync(resolveWithin(context.workspace, spec.expected), 'utf8')
     const passed = context.finalText === expected
     return { type: spec.type, passed, message: passed ? 'Exact output matched.' : 'Exact output did not match.', details: passed ? undefined : { expected, actual: context.finalText } }
   }

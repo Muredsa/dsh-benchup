@@ -129,9 +129,11 @@ scenarios:
     fixture: fixtures/auth
     episodes:
       - id: create
+        fixture: fixtures/auth-create
         task: tasks/01-create-auth.md
         state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
       - id: fix
+        fixture: fixtures/auth-fix
         task: tasks/02-fix-refresh.md
         state: { workspace: retain, persistent: retain, session: fresh, process: restart }
       - id: new-session
@@ -139,11 +141,11 @@ scenarios:
         state: { workspace: retain, persistent: retain, session: fresh, process: restart }
 ```
 
-Так описывается холодный первый эпизод и тёплая persistent memory при новом процессе и новой сессии агента в каждом эпизоде. Runner экспортирует `DSH_BENCHUP_STATE_ROOT`; persistent-memory плагин должен использовать этот путь для управляемого reset/retain. Поля `session: continue` и `process: reuse` есть в публичной schema, но в MVP намеренно завершаются ошибкой, а не создают двусмысленные данные.
+Так описывается холодный первый эпизод и тёплая persistent memory при новом процессе и новой сессии агента в каждом эпизоде. `fixture` эпизода заменяет fixture всего scenario для этого эпизода, поэтому seed-факты не попадают в workspace последующего recall. Runner экспортирует `DSH_BENCHUP_STATE_ROOT`; persistent-memory плагин должен использовать этот путь для управляемого reset/retain. Поля `session: continue` и `process: reuse` есть в публичной schema, но в MVP намеренно завершаются ошибкой, а не создают двусмысленные данные.
 
 ## Объективные evaluators
 
-`exact` сравнивает финальный stdout дочернего процесса с ожидаемым файлом. `command` запускает явный argv без shell. `file` проверяет наличие файла в workspace. `json` проверяет JSON-документ по JSON Schema через Ajv. По умолчанию evaluators объединяются как `all`; их можно сгруппировать как `any`.
+`exact` сравнивает финальный stdout дочернего процесса либо с fixture-файлом, либо с литералом `expectedValue`, который остаётся только в experiment definition и недоступен агенту из workspace. `command` запускает явный argv без shell. `file` проверяет наличие файла в workspace. `json` проверяет JSON-документ по JSON Schema через Ajv. По умолчанию evaluators объединяются как `all`; их можно сгруппировать как `any`.
 
 LLM-as-a-judge сознательно не входит в MVP. Добавляйте его только как дополнительный evaluator с закреплённой judge-моделью и сохранённым trace оценки, но не как единственный критерий успеха.
 

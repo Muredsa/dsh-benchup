@@ -146,7 +146,7 @@ export class BenchmarkRunner {
       if (episode.state.session === 'continue' || episode.state.process === 'reuse') {
         throw new Error(`Scenario ${cell.scenario.id} episode ${episode.id} requests ${episode.state.session}/${episode.state.process}; BenchUp MVP only supports fresh short-lived agent sessions. Use process: restart and session: fresh until a persistent driver is added.`)
       }
-      prepareEpisode(workspace, persistent, resolveFixture(cell.scenario.fixture, sourceRoot), episode)
+      prepareEpisode(workspace, persistent, resolveFixture(episode.fixture ?? cell.scenario.fixture, sourceRoot), episode)
       const taskPath = resolveWithin(sourceRoot, episode.task)
       const task = readFileSync(taskPath, 'utf8')
       const artifactDir = join(runRoot, 'episodes', safeName(episode.id))

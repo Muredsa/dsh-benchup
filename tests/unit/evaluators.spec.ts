@@ -11,4 +11,10 @@ describe('JSON evaluator', () => {
     const summary = await evaluate({ mode: 'all', checks: [{ type: 'json', path: 'result.json', schema: { type: 'object', required: ['ok'], properties: { ok: { const: true } } } }] }, { workspace: directory, finalText: '' })
     expect(summary.passed).toBe(true)
   })
+
+  it('compares a literal exact answer without placing it in the workspace', async () => {
+    const directory = mkdtempSync(join(tmpdir(), 'dsh-benchup-evaluator-'))
+    const summary = await evaluate({ mode: 'all', checks: [{ type: 'exact', expectedValue: 'private-answer' }] }, { workspace: directory, finalText: 'private-answer' })
+    expect(summary.passed).toBe(true)
+  })
 })

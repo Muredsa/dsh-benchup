@@ -129,9 +129,11 @@ scenarios:
     fixture: fixtures/auth
     episodes:
       - id: create
+        fixture: fixtures/auth-create
         task: tasks/01-create-auth.md
         state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
       - id: fix
+        fixture: fixtures/auth-fix
         task: tasks/02-fix-refresh.md
         state: { workspace: retain, persistent: retain, session: fresh, process: restart }
       - id: new-session
@@ -139,11 +141,11 @@ scenarios:
         state: { workspace: retain, persistent: retain, session: fresh, process: restart }
 ```
 
-This models a cold first episode followed by warm persistent memory while each agent process and session is new. The runner exports `DSH_BENCHUP_STATE_ROOT`; a persistent-memory plugin must use that location to participate in reset/retain control. `session: continue` and `process: reuse` are retained in the public schema but intentionally fail in the MVP instead of producing ambiguous data.
+This models a cold first episode followed by warm persistent memory while each agent process and session is new. An episode `fixture` replaces the scenario fixture for that episode, which keeps seed-only facts outside a later recall workspace. The runner exports `DSH_BENCHUP_STATE_ROOT`; a persistent-memory plugin must use that location to participate in reset/retain control. `session: continue` and `process: reuse` are retained in the public schema but intentionally fail in the MVP instead of producing ambiguous data.
 
 ## Objective evaluators
 
-`exact` compares the final child stdout with an expected file; it is best for deliberately minimal reply scenarios. `command` runs explicit argv with no shell. `file` checks workspace file presence. `json` validates a workspace JSON document with JSON Schema via Ajv. Evaluators are `all` by default and may be grouped as `any`.
+`exact` compares the final child stdout with either an expected fixture file or an `expectedValue` literal held only in the experiment definition; the latter prevents the agent from reading the answer from its workspace. It is best for deliberately minimal reply scenarios. `command` runs explicit argv with no shell. `file` checks workspace file presence. `json` validates a workspace JSON document with JSON Schema via Ajv. Evaluators are `all` by default and may be grouped as `any`.
 
 LLM-as-a-judge is intentionally not included in the MVP. Add it only as a supplemental evaluator with its own pinned judge model and preserved judgement trace; do not use it as the only definition of success.
 

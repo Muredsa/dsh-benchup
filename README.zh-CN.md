@@ -129,9 +129,11 @@ scenarios:
     fixture: fixtures/auth
     episodes:
       - id: create
+        fixture: fixtures/auth-create
         task: tasks/01-create-auth.md
         state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
       - id: fix
+        fixture: fixtures/auth-fix
         task: tasks/02-fix-refresh.md
         state: { workspace: retain, persistent: retain, session: fresh, process: restart }
       - id: new-session
@@ -139,11 +141,11 @@ scenarios:
         state: { workspace: retain, persistent: retain, session: fresh, process: restart }
 ```
 
-这表示第一个 episode 为 cold，随后在每个 episode 都使用新 agent process 和新 session 的前提下保留 persistent memory。Runner 会导出 `DSH_BENCHUP_STATE_ROOT`；persistent-memory 插件必须使用该位置，才能参与可控的 reset/retain。公共 schema 保留 `session: continue` 和 `process: reuse`，但 MVP 会明确报错，而不会生成含义不清的数据。
+这表示第一个 episode 为 cold，随后在每个 episode 都使用新 agent process 和新 session 的前提下保留 persistent memory。episode 的 `fixture` 会替换该 episode 的 scenario fixture，因此 seed-only facts 不会出现在后续 recall workspace 中。Runner 会导出 `DSH_BENCHUP_STATE_ROOT`；persistent-memory 插件必须使用该位置，才能参与可控的 reset/retain。公共 schema 保留 `session: continue` 和 `process: reuse`，但 MVP 会明确报错，而不会生成含义不清的数据。
 
 ## 客观 evaluators
 
-`exact` 将子进程最终 stdout 与预期文件比较。`command` 以显式 argv 运行，不使用 shell。`file` 检查 workspace 中的文件是否存在。`json` 通过 Ajv 按 JSON Schema 验证 workspace JSON 文档。默认情况下 evaluators 使用 `all`；也可以组合为 `any`。
+`exact` 将子进程最终 stdout 与 fixture 文件或仅保留在 experiment definition 中的 `expectedValue` 字面量比较；后者不会让 agent 从 workspace 读取答案。`command` 以显式 argv 运行，不使用 shell。`file` 检查 workspace 中的文件是否存在。`json` 通过 Ajv 按 JSON Schema 验证 workspace JSON 文档。默认情况下 evaluators 使用 `all`；也可以组合为 `any`。
 
 MVP 有意不包含 LLM-as-a-judge。若需使用，请只把它作为补充 evaluator，并固定 judge model、保存评判 trace；不要把它作为唯一成功标准。
 
