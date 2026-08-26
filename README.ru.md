@@ -20,6 +20,14 @@ DSH BenchUp отвечает на практический вопрос: **ст�
 | **Надёжность** | retries, ошибки, timeouts, разброс между повторами |
 | **Диагностика** | namespaced-метрики от проверяемого плагина |
 
+## Установка
+
+```sh
+npm i dsh-benchup
+```
+
+Для benchmark в Harness пакет должен быть установлен в каждый запускаемый profile. Команды ниже запускают установку через DSH, поэтому dependency попадёт в правильный каталог profile.
+
 ## Быстрый запуск
 
 BenchUp состоит из CLI и временного observer-плагина. Установите [`dsh-benchup` из npm](https://www.npmjs.com/package/dsh-benchup) в каждый профиль Harness, который будет запущен в benchmark. Это намеренно обычная dependency, а не всегда активный `dsh.bundle`: обычные сессии не записывают traces.

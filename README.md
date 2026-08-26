@@ -20,6 +20,14 @@ DSH BenchUp answers one practical question: **did this change make the agent bet
 | **Robustness** | retries, errors, timeouts, variance across repetitions |
 | **Diagnostics** | namespaced metrics contributed by the plugin under test |
 
+## Install
+
+```sh
+npm i dsh-benchup
+```
+
+For a Harness benchmark, install the package in every profile that BenchUp will start. The commands below do this through DSH, so the dependency is placed in the right profile directory.
+
 ## Quick start
 
 BenchUp has a CLI and a temporary observer plugin. Install [`dsh-benchup` from npm](https://www.npmjs.com/package/dsh-benchup) into every Harness profile that a benchmark starts; it is deliberately a plain dependency, not an always-on `dsh.bundle`, so normal sessions are never traced.

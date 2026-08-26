@@ -20,6 +20,14 @@ DSH BenchUp 回答一个实际问题：**这项改动让 agent 变好了，还�
 | **稳健性** | retries、错误、timeouts、多次运行的方差 |
 | **诊断数据** | 被测插件提供的带命名空间指标 |
 
+## 安装
+
+```sh
+npm i dsh-benchup
+```
+
+对于 Harness benchmark，请将包安装到 BenchUp 会启动的每个 profile。下面的命令通过 DSH 安装，因此 dependency 会进入正确的 profile 目录。
+
 ## 快速开始
 
 BenchUp 包含 CLI 和一个临时 observer 插件。请把 [`dsh-benchup` 从 npm](https://www.npmjs.com/package/dsh-benchup) 安装到每个 benchmark 会启动的 Harness profile 中。它有意保持为普通 dependency，而不是始终启用的 `dsh.bundle`，因此正常 session 不会被记录。
