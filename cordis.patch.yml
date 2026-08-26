@@ -1,0 +1,9 @@
+# Insert this patch after the profile's agent loop and session plugins.
+# The runner also creates a temporary equivalent patch per child process.
+- insert:
+    - id: dsh-benchup
+      name: dsh-benchup
+      config:
+        outputDir: !!js process.env.DSH_BENCHUP_OUTPUT_DIR
+        runId: !!js process.env.DSH_BENCHUP_RUN_ID
+        episodeId: !!js process.env.DSH_BENCHUP_EPISODE_ID

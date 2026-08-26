@@ -1,0 +1,39 @@
+{
+  "name": "dsh-benchup",
+  "version": "0.1.0",
+  "description": "Reproducible benchmark runner and observer plugin for DeepSeek Harness.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "dsh-benchup": "./dist/cli.js"
+  },
+  "files": ["dist", "README.md", "LICENSE", "cordis.patch.yml"],
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./runner": { "types": "./dist/runner/index.d.ts", "import": "./dist/runner/index.js" },
+    "./metrics": { "types": "./dist/metrics/index.d.ts", "import": "./dist/metrics/index.js" }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "check": "pnpm typecheck && pnpm test",
+    "prepackOnly": "pnpm build"
+  },
+  "keywords": ["deepseek", "dsh", "benchmark", "agent", "plugin"],
+  "license": "MIT",
+  "engines": { "node": ">=22.19" },
+  "peerDependencies": { "@deepseek-ai/cordis": "^4.0.1" },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@types/node": "^22.19.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  },
+  "packageManager": "pnpm@10.27.0"
+}
