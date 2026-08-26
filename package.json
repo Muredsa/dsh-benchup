@@ -1,6 +1,6 @@
 {
   "name": "dsh-benchup",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Reproducible benchmark runner and observer plugin for DeepSeek Harness.",
   "type": "module",
   "main": "./dist/index.js",
