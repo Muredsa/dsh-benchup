@@ -1,0 +1,62 @@
+version: 1
+runs: 1
+schedule: ordered
+
+models:
+  ox-alpha:
+    provider: openrouter
+    model: stealth/ox-alpha
+    # OpenRouter reports 1 and max as Ox Alpha's defaults. Pin both because a
+    # benchmark must not inherit a different profile's request defaults.
+    temperature: 1
+    reasoningEffort: max
+
+variants:
+  baseline:
+    profile: headless
+
+scenarios:
+  - id: baseline/exact-response
+    fixture: ox-alpha/exact-response
+    task: ox-alpha/tasks/01-exact-response.md
+    evaluators:
+      type: exact
+      expected: expected.txt
+
+  - id: baseline/file-to-json
+    fixture: ox-alpha/file-to-json
+    task: ox-alpha/tasks/02-file-to-json.md
+    evaluators:
+      mode: all
+      checks:
+        - type: file
+          path: result.json
+        - type: json
+          path: result.json
+          schema:
+            type: object
+            additionalProperties: false
+            required: [project, release, owners]
+            properties:
+              project: { const: benchup }
+              release: { const: 7 }
+              owners:
+                type: array
+                items: { type: string }
+                minItems: 2
+                maxItems: 2
+                uniqueItems: true
+                allOf:
+                  - contains: { const: Ada }
+                  - contains: { const: Lin }
+
+  - id: baseline/code-repair
+    fixture: ox-alpha/code-repair
+    task: ox-alpha/tasks/03-code-repair.md
+    evaluators:
+      mode: all
+      checks:
+        - type: command
+          command: [node, --test, checks/slug-check.mjs]
+        - type: file
+          path: src/slug.js

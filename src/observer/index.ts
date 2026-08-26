@@ -112,17 +112,25 @@ export class BenchupObserver {
   }
 
   private applyModel(proposal: unknown): unknown {
-    const request = asRecord(proposal)
-    const model = this.config.model!
-    return {
-      ...request,
-      provider: model.provider,
-      model: model.model,
-      reasoningEffort: model.reasoningEffort ?? request.reasoningEffort,
-      maxTokens: model.maxTokens ?? request.maxTokens,
-      temperature: model.temperature ?? request.temperature,
-      stop: model.stop ?? request.stop,
-    }
+    return applyModelSpec(proposal, this.config.model!)
+  }
+}
+
+/** Applies a benchmark's pinned model fields without adding undefined event data. */
+export function applyModelSpec(proposal: unknown, model: ModelSpec): Record<string, unknown> {
+  const request = asRecord(proposal)
+  const reasoningEffort = model.reasoningEffort ?? request.reasoningEffort
+  const maxTokens = model.maxTokens ?? request.maxTokens
+  const temperature = model.temperature ?? request.temperature
+  const stop = model.stop ?? request.stop
+  return {
+    ...request,
+    provider: model.provider,
+    model: model.model,
+    ...reasoningEffort === undefined ? {} : { reasoningEffort },
+    ...maxTokens === undefined ? {} : { maxTokens },
+    ...temperature === undefined ? {} : { temperature },
+    ...stop === undefined ? {} : { stop },
   }
 }
 
