@@ -1,0 +1,28 @@
+version: 1
+runs: 1
+schedule: paired-shuffled
+
+models:
+  gpt-5.3-codex-spark:
+    provider: openai-codex
+    model: gpt-5.3-codex-spark
+    reasoningEffort: high
+
+variants:
+  baseline:
+    profile: headless
+  memcore:
+    profile: headless-memcore
+
+scenarios:
+  - id: fact/aurora-marker
+    episodes:
+      - id: seed
+        fixture: memcore/fixtures/fact-aurora/seed
+        task: memcore/tasks/store-one.md
+        state: { workspace: reset, persistent: reset, session: fresh, process: fresh }
+      - id: recall
+        fixture: memcore/fixtures/fact-aurora/recall
+        task: memcore/tasks/recall.md
+        state: { workspace: reset, persistent: retain, session: fresh, process: restart }
+    evaluators: { type: exact, expectedValue: "AURORA-17-CRANE\n" }

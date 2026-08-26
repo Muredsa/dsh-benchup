@@ -56,8 +56,9 @@ for (const name of [...groups.keys()].sort()) {
 
 const memoryBaseline = byVariant(groups.get('memory-total') ?? [], 'baseline')
 const memoryMemcore = byVariant(groups.get('memory-total') ?? [], 'memcore')
-const controlBaseline = byVariant(groups.get('control') ?? [], 'baseline')
-const controlMemcore = byVariant(groups.get('control') ?? [], 'memcore')
+const controlCells = groups.get('control') ?? []
+const controlBaseline = byVariant(controlCells, 'baseline')
+const controlMemcore = byVariant(controlCells, 'memcore')
 const memoryDelta = memoryMemcore.passRate - memoryBaseline.passRate
 const controlDelta = controlMemcore.passRate - controlBaseline.passRate
 
@@ -76,7 +77,9 @@ for (const name of Object.keys(suiteMemcore.custom).sort()) {
 }
 
 let verdict
-if (memoryDelta > 0 && controlDelta >= -0.05) {
+if (controlCells.length === 0) {
+  verdict = 'This run is a wiring smoke test, not evidence of an overall improvement: it has no control scenarios. Run the full suite before drawing a quality conclusion.'
+} else if (memoryDelta > 0 && controlDelta >= -0.05) {
   verdict = 'Evidence supports the current MemCore design: memory-task quality improved without a material control-task regression. Decide separately whether the listed efficiency cost is acceptable.'
 } else if (memoryDelta <= 0) {
   verdict = 'The benchmark does not support the current MemCore design: memory-task quality did not improve over baseline. Inspect traces before changing the design or increasing the memory budget.'

@@ -184,16 +184,23 @@ export class BenchmarkRunner {
 
   private async executeDshChild(request: ChildRunRequest): Promise<CommandResult> {
     const patchPath = join(request.artifactDir, 'benchup.patch.yml')
-    const patch = [{ insert: [{
-      id: 'dsh-benchup',
-      name: 'dsh-benchup',
-      config: {
-        outputDir: request.artifactDir,
-        runId: request.runId,
-        episodeId: request.episodeId,
-        model: request.model,
+    const patch = [
+      {
+        id: 'session-title-llm',
+        name: '@deepseek-ai/dsh-session-title-first-prompt-llm',
+        disabled: true,
       },
-    }] }]
+      { insert: [{
+        id: 'dsh-benchup',
+        name: 'dsh-benchup',
+        config: {
+          outputDir: request.artifactDir,
+          runId: request.runId,
+          episodeId: request.episodeId,
+          model: request.model,
+        },
+      }] },
+    ]
     writeFileSync(patchPath, stringify(patch), 'utf8')
     const args = [...(this.options.dshArgs ?? []), '--profile', request.profile, '--patch', patchPath, request.task]
     if (this.options.dshSourceRoot !== undefined) {

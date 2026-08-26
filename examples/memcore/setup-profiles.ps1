@@ -1,8 +1,8 @@
 param(
   [Parameter(Mandatory = $true)]
   [string]$Harness,
-  [string]$MemCoreSpec = 'github:Muredsa/dsh-memcore#v0.1.6',
-  [string]$MemCoreBuildKey = 'dsh-memcore@https://codeload.github.com/Muredsa/dsh-memcore/tar.gz/87fc7194c97f896fa3aea7572409aef10eb1155b'
+  [string]$MemCoreSpec = 'github:Muredsa/dsh-memcore#v0.1.7',
+  [string]$MemCoreBuildKey = 'dsh-memcore@https://codeload.github.com/Muredsa/dsh-memcore/tar.gz/8051adf56e553ed80b5bd6cab3174dda10b36e8b'
 )
 
 $dshHome = if ([string]::IsNullOrWhiteSpace($env:DSH_HOME)) { Join-Path $HOME '.dsh' } else { $env:DSH_HOME }

@@ -6,7 +6,6 @@ models:
   gpt-5.3-codex-spark:
     provider: openai-codex
     model: gpt-5.3-codex-spark
-    temperature: 1
     reasoningEffort: high
 
 variants:
