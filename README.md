@@ -12,20 +12,66 @@ It reports independent dimensions:
 - **Robustness:** retries, errors, timeouts, and variation over repetitions.
 - **Diagnostics:** arbitrary, namespaced metrics from the plugin being tested.
 
-## Install
+## Install and run
 
-Install [`dsh-benchup` from npm](https://www.npmjs.com/package/dsh-benchup) into every Harness profile that a benchmark will start, so its temporary profile patch can resolve the observer plugin:
+BenchUp has a CLI and a temporary observer plugin. Install [`dsh-benchup` from npm](https://www.npmjs.com/package/dsh-benchup) into every Harness profile that a benchmark starts; it is deliberately a plain dependency, not an always-on `dsh.bundle`, so normal sessions are never traced.
 
-```powershell
-cd $env:DSH_HOME\profiles\headless
-pnpm add dsh-benchup
-```
+### Installed Harness
 
-Repeat for each comparison profile, including a `headless-experiment` profile that contains the plugin or configuration under test. To test an unreleased GitHub revision, use `pnpm add github:Muredsa/dsh-benchup` instead. The package exposes the standalone CLI:
+When `dsh` is installed on your `PATH`, use its profile-aware installer. It initializes the built-in `headless` profile on first use and works whether or not `DSH_HOME` is set:
 
 ```powershell
-pnpm exec dsh-benchup run .\examples\basic-experiment.yml
+dsh plugin --profile headless add dsh-benchup
 ```
+
+DSH may print `declares no dsh.bundle`; that is expected for BenchUp. Resolve the profile directory with the same fallback DSH uses, then run the installed local CLI:
+
+```powershell
+$dshHome = if ([string]::IsNullOrWhiteSpace($env:DSH_HOME)) { Join-Path $HOME '.dsh' } else { $env:DSH_HOME }
+$profile = Join-Path $dshHome 'profiles\headless'
+$experiment = 'C:\path\to\benchmarks\examples\basic-experiment.yml'
+$output = 'C:\path\to\benchmarks\.dsh-benchup'
+
+Push-Location $profile
+try { pnpm exec dsh-benchup run $experiment --output $output } finally { Pop-Location }
+```
+
+The included `basic-experiment.yml` is a one-run smoke benchmark using only `headless`; it needs the model credentials and default provider that your Harness profile normally uses.
+
+### Harness source checkout
+
+For a cloned Harness repository, do not run `pnpm dsh` from an arbitrary directory. Run the installer from the checkout, then pass `--dsh-source` to BenchUp. This invokes the checkout's `node --import tsx/esm` launcher while still giving the agent an isolated benchmark workspace:
+
+```powershell
+$harness = 'C:\path\to\deepseek-harness'
+$benchmarks = 'C:\path\to\dsh-benchup'
+
+Set-Location $harness
+pnpm dsh plugin --profile headless add dsh-benchup
+
+$dshHome = if ([string]::IsNullOrWhiteSpace($env:DSH_HOME)) { Join-Path $HOME '.dsh' } else { $env:DSH_HOME }
+$profile = Join-Path $dshHome 'profiles\headless'
+Push-Location $profile
+try {
+  pnpm exec dsh-benchup run (Join-Path $benchmarks 'examples\basic-experiment.yml') --dsh-source $harness --output (Join-Path $benchmarks '.dsh-benchup')
+} finally { Pop-Location }
+```
+
+`--dsh <command>` remains available when a non-default `dsh` executable is already available. It and `--dsh-source` are mutually exclusive.
+
+### Compare profiles
+
+Create an experiment profile by copying the initialized baseline profile, then install the variant under test. Copying preserves the `headless` bundle stack; creating an arbitrary new profile with `dsh plugin` alone starts from the minimal base stack and cannot run headless tasks.
+
+```powershell
+$baseline = Join-Path $dshHome 'profiles\headless'
+$experimentProfile = Join-Path $dshHome 'profiles\headless-experiment'
+if (-not (Test-Path $experimentProfile)) { Copy-Item $baseline $experimentProfile -Recurse }
+
+dsh plugin --profile headless-experiment add dsh-memcore
+```
+
+Install BenchUp into any profile that was not copied from an already configured profile. To try an unreleased BenchUp revision, substitute `github:Muredsa/dsh-benchup` for `dsh-benchup` in the installation command.
 
 `dsh-benchup` is the supported command in this release. A future DSH application bundle may add the shorter `dsh benchup` alias without changing experiment files.
 
@@ -120,7 +166,7 @@ pnpm exec dsh-benchup --help
 
 ## Releases
 
-Pushing a version tag such as `v0.1.1` starts the `Publish to npm` GitHub Actions workflow. It validates and builds with Node 24 before running `npm publish`; it uses npm Trusted Publishing through GitHub OIDC and therefore stores no npm access token in GitHub.
+Pushing a version tag such as `v0.1.2` starts the `Publish to npm` GitHub Actions workflow. It validates and builds with Node 24 before running `npm publish`; it uses npm Trusted Publishing through GitHub OIDC and therefore stores no npm access token in GitHub.
 
 After configuring the trusted publisher once in npm, make a release with:
 

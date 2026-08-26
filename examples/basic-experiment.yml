@@ -1,5 +1,5 @@
 version: 1
-runs: 3
+runs: 1
 schedule: paired-shuffled
 
 models:
@@ -11,9 +11,6 @@ models:
 variants:
   baseline:
     profile: headless
-  experiment:
-    # Create this profile with the plugin or configuration you want to compare.
-    profile: headless-experiment
 
 scenarios:
   - id: basic/reply

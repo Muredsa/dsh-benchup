@@ -7,6 +7,7 @@ import { evaluate, runCommand, type CommandResult, type EvaluationSummary } from
 import type { CoreMetrics } from '../observer/index.js'
 import type { MetricDefinition } from '../metrics/index.js'
 import { parseExperiment, type EpisodeSpec, type ExperimentSpec, type ModelSpec, type ScenarioSpec, type VariantSpec } from '../schema/index.js'
+import { sourceDshLaunch } from './source-dsh.js'
 
 export interface ChildRunRequest {
   profile: string
@@ -25,6 +26,7 @@ export type ChildExecutor = (request: ChildRunRequest) => Promise<CommandResult>
 export interface BenchmarkRunnerOptions {
   outputDir?: string
   dshCommand?: string
+  dshSourceRoot?: string
   dshArgs?: string[]
   timeoutMs?: number
   keepWorkspaces?: boolean
@@ -193,8 +195,18 @@ export class BenchmarkRunner {
       },
     }] }]
     writeFileSync(patchPath, stringify(patch), 'utf8')
-    const command = this.options.dshCommand ?? 'dsh'
     const args = [...(this.options.dshArgs ?? []), '--profile', request.profile, '--patch', patchPath, request.task]
+    if (this.options.dshSourceRoot !== undefined) {
+      const launch = sourceDshLaunch(this.options.dshSourceRoot, request.cwd, args)
+      return runCommand([launch.command, ...launch.args], launch.cwd, request.timeoutMs, {
+        ...process.env,
+        DSH_BENCHUP_STATE_ROOT: request.stateRoot,
+        DSH_BENCHUP_OUTPUT_DIR: request.artifactDir,
+        DSH_BENCHUP_RUN_ID: request.runId,
+        DSH_BENCHUP_EPISODE_ID: request.episodeId,
+      })
+    }
+    const command = this.options.dshCommand ?? 'dsh'
     return runCommand([command, ...args], request.cwd, request.timeoutMs, {
       ...process.env,
       DSH_BENCHUP_STATE_ROOT: request.stateRoot,
