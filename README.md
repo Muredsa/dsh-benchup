@@ -1,5 +1,8 @@
 # DSH BenchUp
 
+[![npm version](https://img.shields.io/npm/v/dsh-benchup?logo=npm)](https://www.npmjs.com/package/dsh-benchup)
+[![CI](https://github.com/Muredsa/dsh-benchup/actions/workflows/ci.yml/badge.svg)](https://github.com/Muredsa/dsh-benchup/actions/workflows/ci.yml)
+
 DSH BenchUp is a small, reproducible benchmark runner for [DeepSeek Harness](https://github.com/deepseek-ai/DeepSeek-Harness). It compares model, profile, prompt, compaction, subagent, and plugin variants without reducing the result to one misleading score.
 
 It reports independent dimensions:
@@ -11,14 +14,14 @@ It reports independent dimensions:
 
 ## Install
 
-Install `dsh-benchup` into every Harness profile that a benchmark will start, so its temporary profile patch can resolve the observer plugin. Until the package is published to npm, install it from GitHub:
+Install [`dsh-benchup` from npm](https://www.npmjs.com/package/dsh-benchup) into every Harness profile that a benchmark will start, so its temporary profile patch can resolve the observer plugin:
 
 ```powershell
 cd $env:DSH_HOME\profiles\headless
-pnpm add github:Muredsa/dsh-benchup
+pnpm add dsh-benchup
 ```
 
-Repeat for each comparison profile, including a `headless-experiment` profile that contains the plugin or configuration under test. The package exposes the standalone CLI:
+Repeat for each comparison profile, including a `headless-experiment` profile that contains the plugin or configuration under test. To test an unreleased GitHub revision, use `pnpm add github:Muredsa/dsh-benchup` instead. The package exposes the standalone CLI:
 
 ```powershell
 pnpm exec dsh-benchup run .\examples\basic-experiment.yml
