@@ -1,18 +1,26 @@
 # DSH BenchUp
 
+[English](README.md) | [Русский](README.ru.md) | [简体中文](README.zh-CN.md)
+
 [![npm version](https://img.shields.io/npm/v/dsh-benchup?logo=npm)](https://www.npmjs.com/package/dsh-benchup)
 [![CI](https://github.com/Muredsa/dsh-benchup/actions/workflows/ci.yml/badge.svg)](https://github.com/Muredsa/dsh-benchup/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/dsh-benchup)](LICENSE)
+[![Node.js](https://img.shields.io/node/v/dsh-benchup)](package.json)
 
-DSH BenchUp is a small, reproducible benchmark runner for [DeepSeek Harness](https://github.com/deepseek-ai/DeepSeek-Harness). It compares model, profile, prompt, compaction, subagent, and plugin variants without reducing the result to one misleading score.
+> Reproducible, profile-aware benchmarks for [DeepSeek Harness](https://github.com/deepseek-ai/DeepSeek-Harness).
 
-It reports independent dimensions:
+DSH BenchUp answers one practical question: **did this change make the agent better, or merely more expensive?** It runs the same scenarios across models, profiles, prompts, compaction strategies, subagent setups, and plugins — then compares the evidence without collapsing it into a single misleading score.
 
-- **Quality:** task success and objective evaluator results.
-- **Efficiency:** token usage, LLM turns, tool calls, wall time, and repeated work.
-- **Robustness:** retries, errors, timeouts, and variation over repetitions.
-- **Diagnostics:** arbitrary, namespaced metrics from the plugin being tested.
+## What it measures
 
-## Install and run
+| Dimension | Signals |
+| --- | --- |
+| **Quality** | task success, exact output, tests, files, JSON Schema |
+| **Efficiency** | input/output tokens, LLM turns, tool calls, repeated work, wall time |
+| **Robustness** | retries, errors, timeouts, variance across repetitions |
+| **Diagnostics** | namespaced metrics contributed by the plugin under test |
+
+## Quick start
 
 BenchUp has a CLI and a temporary observer plugin. Install [`dsh-benchup` from npm](https://www.npmjs.com/package/dsh-benchup) into every Harness profile that a benchmark starts; it is deliberately a plain dependency, not an always-on `dsh.bundle`, so normal sessions are never traced.
 
