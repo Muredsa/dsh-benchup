@@ -2,6 +2,8 @@
 
 This is a 24-scenario, provider-neutral comparison of the same model without MemCore (`baseline`) and with it (`memcore`). It answers whether persistent external memory improves a fresh agent session, whether it selects the newest fact, and what it costs.
 
+The checked-in configuration currently pins ChatGPT OAuth model `gpt-5.3-codex-spark` at its account-reported default reasoning effort, `high`. Both variants must have `dsh-openai-oauth` installed and use the same signed-in ChatGPT account. The Codex app-server does not expose a temperature control, so the recorded `temperature: 1` is descriptive rather than a provider-side generation setting.
+
 ## What it tests
 
 | Group | Scenarios | Objective signal |

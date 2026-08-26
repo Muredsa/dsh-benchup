@@ -3,11 +3,11 @@ runs: 3
 schedule: paired-shuffled
 
 models:
-  ox-alpha:
-    provider: openrouter
-    model: stealth/ox-alpha
+  gpt-5.3-codex-spark:
+    provider: openai-codex
+    model: gpt-5.3-codex-spark
     temperature: 1
-    reasoningEffort: max
+    reasoningEffort: high
 
 variants:
   baseline:
