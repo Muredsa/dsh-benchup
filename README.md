@@ -115,4 +115,18 @@ pnpm build
 pnpm exec dsh-benchup --help
 ```
 
+## Releases
+
+Pushing a version tag such as `v0.1.1` starts the `Publish to npm` GitHub Actions workflow. It validates and builds with Node 24 before running `npm publish`; it uses npm Trusted Publishing through GitHub OIDC and therefore stores no npm access token in GitHub.
+
+After configuring the trusted publisher once in npm, make a release with:
+
+```powershell
+pnpm check
+npm version patch -m "release: v%s"
+git push --follow-tags
+```
+
+Use `minor` or `major` instead of `patch` when SemVer requires it. A tag only publishes a version that does not already exist in npm.
+
 Licensed under [MIT](LICENSE).

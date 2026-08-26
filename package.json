@@ -19,10 +19,18 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "check": "pnpm typecheck && pnpm test",
-    "prepackOnly": "pnpm build"
+    "prepublishOnly": "pnpm check && pnpm build"
   },
   "keywords": ["deepseek", "dsh", "benchmark", "agent", "plugin"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Muredsa/dsh-benchup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Muredsa/dsh-benchup/issues"
+  },
+  "homepage": "https://github.com/Muredsa/dsh-benchup#readme",
   "engines": { "node": ">=22.19" },
   "peerDependencies": { "@deepseek-ai/cordis": "^4.0.1" },
   "dependencies": {
